@@ -1,5 +1,10 @@
 Now :- 
 
-31:26 
+1:04:28
 
-https://www.youtube.com/watch?v=RkwbGuL-dzo&list=WL&index=5&ab_channel=KlitonBare
+https://www.youtube.com/watch?v=RkwbGuL-dzo&list=WL&index=6&ab_channel=KlitonBare
+
+
+
+npx prisma studio
+to set up prisma virtually
