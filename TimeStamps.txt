@@ -5,5 +5,9 @@ Now :-
 https://www.youtube.com/watch?v=RkwbGuL-dzo&list=WL&index=8&ab_channel=KlitonBare
 
 
+
+==========
+
 npx prisma studio
+
 to set up prisma virtually
