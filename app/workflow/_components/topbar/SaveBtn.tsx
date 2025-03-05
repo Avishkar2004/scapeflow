@@ -23,6 +23,7 @@ export default function SaveBtn({ workflowId }: { workflowId: string }) {
 
   return (
     <Button
+    disabled={saveMutation.isPending}
       variant={"outline"}
       className="flex items-center gap-2"
       onClick={() => {
