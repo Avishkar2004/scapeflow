@@ -32,8 +32,6 @@ const useExecutionPlan = () => {
 
   const generateExecutionPlan = useCallback(() => {
     const { nodes, edges } = toObject();
-    console.log("Nodes:", nodes);
-    console.log("Edges:", edges);
 
     const { executionPlan, error } = FlowToExecutionPlan(
       nodes as AppNode[],
@@ -41,13 +39,11 @@ const useExecutionPlan = () => {
     );
 
     if (error) {
-      console.log("Execution Plan Error:", error);
       handleError(error);
       return null;
     }
 
     clearErrors();
-    console.log("Generated Execution Plan:", executionPlan);
 
     return executionPlan;
   }, [toObject, handleError, clearErrors]);

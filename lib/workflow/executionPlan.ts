@@ -107,8 +107,6 @@ function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
   const invalidInputs = [];
   const inputs = TaskRegistry[node.data.type]?.inputs || [];
 
-  console.log(`Checking inputs for node ${node.id}:`, inputs);
-
   for (const input of inputs) {
     const inputValue = node.data.inputs?.[input.name];
     const inputValueProvided = inputValue?.length > 0;
@@ -134,7 +132,6 @@ function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
       if (planned.has(inputLinkedToOutput.source)) continue;
     }
 
-    console.warn(`Missing required input for node ${node.id}: ${input.name}`);
     invalidInputs.push(input.name);
   }
 
