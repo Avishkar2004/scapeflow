@@ -56,12 +56,12 @@ export function FlowToExecutionPlan(
         }
       }
       nextPhase.nodes.push(currentNode);
-      planned.add(currentNode.id);
-    }
+    } 
 
-    if (nextPhase.nodes.length > 0) {
-      executionPlan.push(nextPhase);
+    for (const node of nextPhase.nodes) {
+      planned.add(node.id);
     }
+    executionPlan.push(nextPhase);
   }
 
   return { executionPlan };
