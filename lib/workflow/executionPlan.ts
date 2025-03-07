@@ -1,4 +1,4 @@
-import { AppNode } from "@/types/appNode";
+import { AppNode, AppNodeMissingInputs } from "@/types/appNode";
 import {
   WorkFlowExecutionPlan,
   WorkFlowExecutionPlanPhase,
@@ -6,8 +6,17 @@ import {
 import { Edge, getIncomers } from "@xyflow/react";
 import { TaskRegistry } from "./task/registry";
 
+export enum FlowToExecutionPlanValidationError {
+  "NO_ENTRY_POINT",
+  "INVALID_INPUTS",
+}
+
 type FlowToExecutionPlanType = {
   executionPlan?: WorkFlowExecutionPlan;
+  error?: {
+    type: FlowToExecutionPlanValidationError;
+    invalidElements?: AppNodeMissingInputs[];
+  };
 };
 
 export function FlowToExecutionPlan(
@@ -15,14 +24,29 @@ export function FlowToExecutionPlan(
   edges: Edge[]
 ): FlowToExecutionPlanType {
   const entryPoint = nodes.find(
-    (node) => TaskRegistry[node.data.type]?.isEntryPoint
+    (node) => TaskRegistry[node.data.type].isEntryPoint
   );
 
   if (!entryPoint) {
-    throw new Error("No entry point found in the workflow.");
+    return {
+      error: {
+        type: FlowToExecutionPlanValidationError.NO_ENTRY_POINT,
+      },
+    };
   }
 
+  const inputWithErrors: AppNodeMissingInputs[] = [];
+
   const planned = new Set<string>();
+
+  const invalidInputs = getInvalidInputs(entryPoint, edges, planned);
+  if (invalidInputs.length > 0) {
+    inputWithErrors.push({
+      nodeId: entryPoint.id,
+      inputs: invalidInputs,
+    });
+  }
+
   const executionPlan: WorkFlowExecutionPlan = [
     {
       phase: 1,
@@ -50,18 +74,30 @@ export function FlowToExecutionPlan(
 
         if (incomers.every((incomer) => planned.has(incomer.id))) {
           console.error("Invalid inputs", currentNode.id, invalidInputs);
-          throw new Error("TODO: HANDLE ERROR 1");
+          inputWithErrors.push({
+            nodeId: currentNode.id,
+            inputs: invalidInputs,
+          });
         } else {
           continue; // Skip this node for now
         }
       }
       nextPhase.nodes.push(currentNode);
-    } 
+    }
 
     for (const node of nextPhase.nodes) {
       planned.add(node.id);
     }
     executionPlan.push(nextPhase);
+  }
+
+  if (inputWithErrors.length > 0) {
+    return {
+      error: {
+        type: FlowToExecutionPlanValidationError.INVALID_INPUTS,
+        invalidElements: inputWithErrors,
+      },
+    };
   }
 
   return { executionPlan };
@@ -70,6 +106,8 @@ export function FlowToExecutionPlan(
 function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
   const invalidInputs = [];
   const inputs = TaskRegistry[node.data.type]?.inputs || [];
+
+  console.log(`Checking inputs for node ${node.id}:`, inputs);
 
   for (const input of inputs) {
     const inputValue = node.data.inputs?.[input.name];
@@ -96,6 +134,7 @@ function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
       if (planned.has(inputLinkedToOutput.source)) continue;
     }
 
+    console.warn(`Missing required input for node ${node.id}: ${input.name}`);
     invalidInputs.push(input.name);
   }
 
