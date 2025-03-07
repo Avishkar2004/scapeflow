@@ -1,0 +1,7 @@
+to set up prisma virtually
+npx prisma studio
+
+
+If you made a database then a use this command to make table :-
+
+"npx prisma migrate dev"

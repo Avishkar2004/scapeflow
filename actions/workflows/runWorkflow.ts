@@ -45,5 +45,4 @@ export async function RunWorkflow(form: {
     throw new Error("no execution plan generated");
   }
   executionPlan = result.executionPlan;
-  console.log("first", executionPlan);
 }
