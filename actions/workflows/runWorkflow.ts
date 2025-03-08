@@ -2,8 +2,14 @@
 
 import prisma from "@/lib/prisma";
 import { FlowToExecutionPlan } from "@/lib/workflow/executionPlan";
+import { ExecutionWorkflow } from "@/lib/workflow/executionWorkflow";
 import { TaskRegistry } from "@/lib/workflow/task/registry";
-import { WorkFlowExecutionPlan } from "@/types/workflow";
+import {
+  ExectionPhaseStatus,
+  WorkflowExecutionTrigger,
+  WorkFlowExecutionPlan,
+  WorkflowExecutionStatus,
+} from "@/types/workflow";
 import { auth } from "@clerk/nextjs/server";
 
 export async function RunWorkflow(form: {
@@ -11,69 +17,69 @@ export async function RunWorkflow(form: {
   flowDefinition?: string;
 }) {
   const { userId } = await auth();
-  if (!userId) {
-    throw new Error("unathenticated");
-  }
+  if (!userId) throw new Error("unauthenticated");
 
   const { workflowId, flowDefinition } = form;
+  if (!workflowId) throw new Error("workflowId is required");
 
-  if (!workflowId) {
-    throw new Error("workflowId is required");
-  }
   const workflow = await prisma.workflow.findUnique({
-    where: {
-      userId,
-      id: workflowId,
-    },
+    where: { userId, id: workflowId },
   });
+  if (!workflow) throw new Error("workflow not found");
 
-  if (!workflow) {
-    throw new Error("workflow not found");
+  if (!flowDefinition) throw new Error("flow definition is not defined");
+
+  let flow;
+  try {
+    flow = JSON.parse(flowDefinition);
+  } catch (error) {
+    throw new Error("Invalid flow definition JSON");
   }
 
-  let executionPlan: WorkFlowExecutionPlan;
-  if (!flowDefinition) {
-    throw new Error("flow definition is not defined");
-  }
-
-  const flow = JSON.parse(flowDefinition);
   const result = FlowToExecutionPlan(flow.nodes, flow.edges);
-  if (result.error) {
-    throw new Error("flow definition plan generated");
+  if (result.error || !result.executionPlan) {
+    throw new Error("Flow definition plan generation failed");
   }
 
-  if (!result.executionPlan) {
-    throw new Error("no execution plan generated");
-  }
-  executionPlan = result.executionPlan;
+  const executionPlan: WorkFlowExecutionPlan = result.executionPlan;
 
   const execution = await prisma.workflowExecution.create({
     data: {
       workflowId,
       userId,
-      status: "PENDING",
+      status: WorkflowExecutionStatus.PENDING,
       startedAt: new Date(),
-      trigger: "manual",
+      trigger: WorkflowExecutionTrigger.MANUAL,
       phases: {
-        create: executionPlan.flatMap((phase) => {
-          return phase.nodes.flatMap((node) => {
+        create: executionPlan.flatMap((phase) =>
+          phase.nodes.flatMap((node) => {
+            const task = TaskRegistry[node.data.type];
+            if (!task) {
+              throw new Error(
+                `Task type ${node.data.type} not found in registry`
+              );
+            }
             return {
               userId,
-              status: "CREATED",
+              status: ExectionPhaseStatus.CREATED,
               number: phase.phase,
               node: JSON.stringify(node),
-              name: TaskRegistry[node.data.type].label,
+              name: task.label,
             };
-          });
-        }),
+          })
+        ),
       },
     },
-    select: {
-      id: true,
-      phases: true,
-    },
+    select: { id: true, phases: true },
   });
-  if (!execution) {
-    throw new Error("workflow execution not created");
-  }
+
+  if (!execution) throw new Error("Workflow execution not created");
+
+  ExecutionWorkflow(execution.id); // run this on background
+
+  // Instead of redirecting here, return the redirect URL
+  return {
+    success: true,
+    redirectUrl: `/workflow/runs/${workflowId}/${execution.id}`,
+  };
 }

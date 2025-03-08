@@ -8,14 +8,19 @@ import { useReactFlow } from "@xyflow/react";
 import { PlayIcon } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function ExecuteBtn({ workflowId }: { workflowId: string }) {
   const generate = useExecutionPlan();
   const { toObject } = useReactFlow();
+  const router = useRouter();
 
   const mutation = useMutation({
     mutationFn: RunWorkflow,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data.success && data.redirectUrl) {
+        router.push(data.redirectUrl); // Manually navigate
+      }
       toast.success("Execution started", { id: "flow-execution" });
     },
     onError: () => {
