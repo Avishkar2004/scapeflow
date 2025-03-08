@@ -1,8 +1,8 @@
 Now :- 
 
-5:23:43
+6:12:34
 
-https://www.youtube.com/watch?v=RkwbGuL-dzo&list=WL&index=16&ab_channel=KlitonBare==========
+https://www.youtube.com/watch?v=RkwbGuL-dzo&list=WL&index=18&ab_channel=KlitonBare
 
 npx prisma studio
 
