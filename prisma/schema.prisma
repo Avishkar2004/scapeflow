@@ -16,8 +16,11 @@ model Workflow {
   name        String
   description String?
 
-  definition String
-  status     String
+  definition    String
+  status        String
+  lastRunAt     DateTime?
+  lastRunId     String?
+  lastRunStatus String?
 
   createdAt  DateTime            @default(now())
   updateAt   DateTime            @updatedAt
@@ -28,14 +31,15 @@ model Workflow {
 }
 
 model WorkflowExecution {
-  id          String    @id @default(cuid())
-  workflowId  String
-  userId      String
-  trigger     String
-  status      String
-  createdAt   DateTime  @default(now())
-  startedAt   DateTime?
-  completedAt DateTime?
+  id              String    @id @default(cuid())
+  workflowId      String
+  userId          String
+  trigger         String
+  status          String
+  createdAt       DateTime  @default(now())
+  startedAt       DateTime?
+  completedAt     DateTime?
+  creditsConsumed Int?      @default(0)
 
   phases ExecutionPhase[]
 
