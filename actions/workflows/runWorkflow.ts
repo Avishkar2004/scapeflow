@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { FlowToExecutionPlan } from "@/lib/workflow/executionPlan";
-import { ExecutionWorkflow } from "@/lib/workflow/executionWorkflow";
+import { ExecutionWorkflow } from "@/lib/workflow/executeWorkflow";
 import { TaskRegistry } from "@/lib/workflow/task/registry";
 import {
   ExectionPhaseStatus,

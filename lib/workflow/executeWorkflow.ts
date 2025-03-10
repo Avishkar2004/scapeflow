@@ -2,13 +2,13 @@ import "server-only";
 import prisma from "../prisma";
 import { revalidatePath } from "next/cache";
 import { ExectionPhaseStatus, WorkflowExecutionStatus } from "@/types/workflow";
-import { waitFor } from "../helper/waitFor";
 import { ExecutionPhase } from "@prisma/client";
 import { AppNode } from "@/types/appNode";
 import { TaskRegistry } from "./task/registry";
-import { TaskType } from "@/types/task";
 import { ExecuteRegistry } from "./executor/registry";
-import { Environment } from "@/types/executor";
+import { Environment, ExecutionEnvironment } from "@/types/executor";
+import { TaskParamType } from "@/types/task";
+import { Browser, Page } from "puppeteer";
 
 export async function ExecutionWorkflow(executionId: string) {
   const execution = await prisma.workflowExecution.findUnique({
@@ -19,7 +19,6 @@ export async function ExecutionWorkflow(executionId: string) {
   if (!execution) {
     throw new Error("Execution not found");
   }
-  // TODO: setup execution environment
   const environment: Environment = {
     phases: {},
   };
@@ -48,7 +47,8 @@ export async function ExecutionWorkflow(executionId: string) {
     executionFailed,
     creditsConsumed
   );
-  // TODO: clean up environment
+
+  await cleanUpEnvironment(environment);
 
   revalidatePath("/workflow/runs");
 }
@@ -140,6 +140,7 @@ async function executeWorkflowPhase(
     data: {
       status: ExectionPhaseStatus.RUNNING,
       startedAt,
+      inputs: JSON.stringify(environment.phases[node.id].inputs),
     },
   });
   const creditsRequired = TaskRegistry[node.data.type].credits;
@@ -150,20 +151,24 @@ async function executeWorkflowPhase(
   // TODO: decrement user balance (with required credits)
   const success = await executePhase(phase, node, environment);
 
-  await finalizePhase(phase.id, success);
+  const outputs = environment.phases[node.id];
+  await finalizePhase(phase.id, success, outputs.outputs);
   return { success };
 }
 
-async function finalizePhase(phaseId: string, success: boolean) {
+async function finalizePhase(phaseId: string, success: boolean, outputs: any) {
   const finalStatus = success
     ? ExectionPhaseStatus.COMPLETED
     : ExectionPhaseStatus.FAILED;
 
   await prisma.executionPhase.update({
-    where: { id: phaseId },
+    where: {
+      id: phaseId,
+    },
     data: {
       status: finalStatus,
       completedAt: new Date(),
+      outputs: JSON.stringify(outputs),
     },
   });
 }
@@ -178,13 +183,17 @@ async function executePhase(
   if (!runFn) {
     return false;
   }
-  return await runFn(environment.phases[node.id]);
+  const ExecutionEnvironment: ExecutionEnvironment<any> =
+    createExecutionEnvironment(node, environment);
+
+  return await runFn(ExecutionEnvironment);
 }
 
 function setupEnviromentForPhase(node: AppNode, environment: Environment) {
   environment.phases[node.id] = { inputs: {}, outputs: {} };
   const inputs = TaskRegistry[node.data.type].inputs;
   for (const input of inputs) {
+    if (input.type === TaskParamType.BROWSER_INSTANCE) continue;
     const inputValue = node.data.inputs[input.name];
     if (inputValue) {
       environment.phases[node.id].inputs[input.name] = inputValue;
@@ -192,8 +201,37 @@ function setupEnviromentForPhase(node: AppNode, environment: Environment) {
     }
 
     // Get input value from outputs in the environment
+  }
+}
 
+function createExecutionEnvironment(
+  node: AppNode,
+  environment: Environment
+): ExecutionEnvironment<any> {
+  return {
+    getInput: (name: string) => environment.phases[node.id]?.inputs[name] ?? "",
+    setOutput: (name: string, value: string) => {
+      if (!environment.phases[node.id].outputs) {
+        environment.phases[node.id].outputs = {};
+      }
+      environment.phases[node.id].outputs[name] = value;
+    },
 
+    getBrowser: () => environment.browser,
+    setBrowser: (browser: Browser) => {
+      environment.browser = browser;
+    },
+    getPage: () => environment.page,
+    setPage: (page: Page) => {
+      environment.page = page;
+    },
+  };
+}
 
+async function cleanUpEnvironment(environment: Environment) {
+  if (environment.browser) {
+    await environment.browser
+      .close()
+      .catch((err) => console.error("can't clise browser:", err));
   }
 }
