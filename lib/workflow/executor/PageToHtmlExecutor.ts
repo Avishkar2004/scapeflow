@@ -8,8 +8,8 @@ export async function PageToHtmltExecutor(
     const html = await environment.getPage()!.content();
     environment.setOutput("Html", html);
     return true;
-  } catch (error) {
-    console.error("Failed to launch browser:", error);
+  } catch (error: any) {
+    environment.log.error(error.message);
     return false;
   }
 }
