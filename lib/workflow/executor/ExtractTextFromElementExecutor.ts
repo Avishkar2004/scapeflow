@@ -14,6 +14,23 @@ export async function ExtractTextFromElementExecutor(
     if (!html) {
       return false;
     }
+
+    const $ = cheerio.load(html);
+    const element = $(selector);
+
+    if (!element) {
+      console.error("Element not found");
+      return false;
+    }
+
+    const extracedText = $.text(element);
+    if (!extracedText) {
+      console.error("Element has no text");
+      return false;
+    }
+ 
+    environment.setOutput("Extracted Text", extracedText);
+
     return true;
   } catch (error) {
     console.error("Failed to launch browser:", error);

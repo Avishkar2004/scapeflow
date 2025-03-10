@@ -5,3 +5,17 @@ npx prisma studio
 If you made a database then a use this command to make table :-
 
 "npx prisma migrate dev"
+
+
+
+1 Eg:-
+https://quotes.toscrape.com/login
+
+Selectors :- body > div > form > input.btn.btn-primary
+
+
+2 Eg:-
+
+https://quotes.toscrape.com/login
+
+Selectors:- body > div.container > div > div.col-md-8 > h1 > a

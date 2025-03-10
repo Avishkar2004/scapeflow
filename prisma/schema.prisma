@@ -31,15 +31,17 @@ model Workflow {
 }
 
 model WorkflowExecution {
-  id              String    @id @default(cuid())
-  workflowId      String
-  userId          String
-  trigger         String
-  status          String
-  createdAt       DateTime  @default(now())
-  startedAt       DateTime?
-  completedAt     DateTime?
-  creditsConsumed Int?      @default(0)
+  id          String    @id @default(cuid())
+  workflowId  String
+  userId      String
+  trigger     String
+  status      String
+  createdAt   DateTime  @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+  definition  String    @default("{}")
+
+  creditsConsumed Int? @default(0)
 
   phases ExecutionPhase[]
 

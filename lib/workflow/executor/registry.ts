@@ -3,6 +3,7 @@ import { LaunchBrowserExecutor } from "./LaunchBrowserExecutor";
 import { PageToHtmltExecutor } from "./PageToHtmlExecutor";
 import { ExecutionEnvironment } from "@/types/executor";
 import { WorkflowTask } from "@/types/workflow";
+import { ExtractTextFromElementExecutor } from "./ExtractTextFromElementExecutor";
 
 type ExecutorFn<T extends WorkflowTask> = (
   environment: ExecutionEnvironment<T>
@@ -14,5 +15,5 @@ type RegistryType = {
 export const ExecuteRegistry: RegistryType = {
   LAUNCH_BROWSER: LaunchBrowserExecutor,
   PAGE_TO_HTML: PageToHtmltExecutor,
-  EXTRACT_TEXT_FROM_ELEMENT: () => Promise.resolve(true),
+  EXTRACT_TEXT_FROM_ELEMENT:ExtractTextFromElementExecutor,
 };
