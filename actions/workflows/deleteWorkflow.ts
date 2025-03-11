@@ -15,8 +15,7 @@ export async function DeleteWorkFlow(id: string) {
     where: {
       id,
       userId,
-
     },
   });
-  revalidatePath("/workflows ")
+  revalidatePath("/workflows");
 }

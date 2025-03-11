@@ -60,7 +60,7 @@ export async function ExecutionWorkflow(executionId: string) {
 
   await cleanUpEnvironment(environment);
 
-  revalidatePath("/workflow/runs");
+  revalidatePath("/workflows/runs");
 }
 
 async function initializeWorkflowExecution(
