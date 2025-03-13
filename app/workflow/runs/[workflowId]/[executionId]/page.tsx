@@ -2,7 +2,7 @@ import { GetWorkflowExecutionWithPhases } from "@/actions/workflows/GetWorkflowE
 import Topbar from "@/app/workflow/_components/topbar/Topbar";
 import { Loader2Icon } from "lucide-react";
 import { Suspense } from "react";
-import ExecutionViewer from "../_components/ExecutionViewer";
+import ExecutionViewer from "./_components/ExecutionViewer";
 
 export default function ExectionViewerPage({
   params,
