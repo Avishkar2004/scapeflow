@@ -37,12 +37,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { ExecutionLog } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import { LogLevel } from "@/types/log";
 import PhaseStatusBadge from "./PhaseStatusBadge";
+import ReactCountUpWrapper from "@/components/ReactCountUpWrapper";
 
 type ExecutionData = Awaited<ReturnType<typeof GetWorkflowExecutionWithPhases>>;
 
@@ -62,6 +63,24 @@ export default function ExecutionViewer({
   });
 
   const isRunning = query.data?.status === WorkflowExecutionStatus.RUNNING;
+
+  useEffect(() => {
+    // While running we auto-select the current running phase in the sidebar
+    const phase = query.data?.phases || [];
+    if (isRunning) {
+      // Select the last executed phase
+      const phaseToSelect = phase.toSorted((a, b) =>
+        a.startedAt! > b.startedAt! ? -1 : 1
+      )[0];
+      setSelectPhase(phaseToSelect.id);
+      return;
+    }
+
+    const phaseToSelect = phase.toSorted((a, b) =>
+      a.completedAt! > b.completedAt! ? -1 : 1
+    )[0];
+    setSelectPhase(phaseToSelect.id);
+  }, [query.data?.phases, isRunning, setSelectPhase]);
 
   const phaseDetails = useQuery({
     queryKey: ["phaseDetails", selectPhase],
@@ -117,7 +136,7 @@ export default function ExecutionViewer({
           <ExecutionLable
             icon={CoinsIcon}
             label="Credits consumed "
-            value={creditsConsumed}
+            value={<ReactCountUpWrapper value={creditsConsumed}/>}
           />
         </div>
         <Separator />
@@ -172,7 +191,7 @@ export default function ExecutionViewer({
                   <CoinsIcon size={18} className="stroke-muted-foreground" />
                   <span>Credits</span>
                 </div>
-                <span>TODO</span>
+                <span>{phaseDetails.data.creditsConsumed}</span>
               </Badge>
 
               <Badge variant={"outline"} className=" space-x-4">
