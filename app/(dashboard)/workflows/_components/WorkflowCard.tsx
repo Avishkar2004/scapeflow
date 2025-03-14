@@ -16,15 +16,9 @@ import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import TooltipWrapper from "@/components/TooltipWrapper";
@@ -113,19 +107,19 @@ function WorkflowActions({
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <TooltipWrapper content={"More actions"}>
-            <Button variant={"outline"} size={"sm"}>
+          <Button variant={"outline"} size={"sm"}>
+            <TooltipWrapper content={"More actions"}>
               <div className="flex items-center justify-center w-full h-full">
                 <MoreVerticalIcon size={18} />
               </div>
-            </Button>
-          </TooltipWrapper>
+            </TooltipWrapper>
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="text-destructive flex items-center gap-2"
+            className="text-destructive flex items-center gap-2 cursor-pointer"
             onSelect={() => {
               setShowDeleteDialog((prev) => !prev);
             }}
