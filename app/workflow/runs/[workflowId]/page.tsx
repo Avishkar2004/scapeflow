@@ -32,7 +32,6 @@ export default function ExecutionPage({
 }
 
 async function ExecutionTableWrapper({ workflowId }: { workflowId: string }) {
-  await waitFor(3000);
   const executions = await GetWorkflowExecutions(workflowId);
   if (!executions) {
     return <div>No Date</div>;
@@ -58,5 +57,7 @@ async function ExecutionTableWrapper({ workflowId }: { workflowId: string }) {
     );
   }
 
-  return <ExecutionTable workflowId={workflowId} />;
+  return <div className="container py-6 w-full">
+    <ExecutionTable workflowId={workflowId} initialData={executions}/>
+  </div>;
 }

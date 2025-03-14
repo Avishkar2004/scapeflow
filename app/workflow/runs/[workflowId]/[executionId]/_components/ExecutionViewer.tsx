@@ -102,7 +102,14 @@ export default function ExecutionViewer({
           <ExecutionLable
             icon={CircleDashedIcon}
             label="Status"
-            value={query.data?.status}
+            value={
+              <div className="font-semibold capitalize flex gap-2 items-center">
+                <PhaseStatusBadge
+                  status={query.data?.status as ExectionPhaseStatus}
+                />
+                <span>{query.data?.status}</span>
+              </div>
+            }
           />
           <ExecutionLable
             icon={CalendarIcon}
@@ -136,7 +143,7 @@ export default function ExecutionViewer({
           <ExecutionLable
             icon={CoinsIcon}
             label="Credits consumed "
-            value={<ReactCountUpWrapper value={creditsConsumed}/>}
+            value={<ReactCountUpWrapper value={creditsConsumed} />}
           />
         </div>
         <Separator />

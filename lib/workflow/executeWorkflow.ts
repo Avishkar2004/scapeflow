@@ -217,6 +217,7 @@ async function executePhase(
   environment: Environment,
   logCollector: LogCollector
 ): Promise<boolean> {
+
   // ✅ Corrected syntax
   const runFn = ExecuteRegistry[node.data.type];
   if (!runFn) {
