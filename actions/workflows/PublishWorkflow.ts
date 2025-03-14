@@ -53,5 +53,5 @@ export async function PublishWorkflow({
       status: WorkFlowStatus.PUBLISHED,
     },
   });
-  revalidatePath(`/workflows/editor/${id}`);
+  revalidatePath(`/workflow/editor/${id}`);
 }

@@ -1,6 +1,5 @@
 import "server-only";
 import prisma from "../prisma";
-import { revalidatePath } from "next/cache";
 import { ExectionPhaseStatus, WorkflowExecutionStatus } from "@/types/workflow";
 import { ExecutionPhase } from "@prisma/client";
 import { AppNode } from "@/types/appNode";
@@ -12,6 +11,7 @@ import { Browser, Page } from "puppeteer";
 import { Edge } from "@xyflow/react";
 import { LogCollector } from "@/types/log";
 import { createCollector } from "../log";
+import { revalidatePath } from "next/cache";
 
 export async function ExecutionWorkflow(executionId: string) {
   const execution = await prisma.workflowExecution.findUnique({
@@ -44,7 +44,7 @@ export async function ExecutionWorkflow(executionId: string) {
       edges,
       execution.userId
     );
-    creditsConsumed += PhaseExecution.creditsConsumed
+    creditsConsumed += PhaseExecution.creditsConsumed;
     if (!PhaseExecution.success) {
       executionFailed = true;
       break;
@@ -61,7 +61,7 @@ export async function ExecutionWorkflow(executionId: string) {
 
   await cleanUpEnvironment(environment);
 
-  revalidatePath("/workflows/runs");
+  revalidatePath("/workflow/runs");
 }
 
 async function initializeWorkflowExecution(
@@ -175,7 +175,7 @@ async function executeWorkflowPhase(
     logCollector,
     creditsConsumed
   );
-  return { success , creditsConsumed};
+  return { success, creditsConsumed };
 }
 
 async function finalizePhase(
@@ -217,7 +217,6 @@ async function executePhase(
   environment: Environment,
   logCollector: LogCollector
 ): Promise<boolean> {
-
   // ✅ Corrected syntax
   const runFn = ExecuteRegistry[node.data.type];
   if (!runFn) {

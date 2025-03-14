@@ -38,12 +38,14 @@ export async function RunWorkflow(form: {
     throw new Error("workflow not found");
   }
   let executionPlan: WorkFlowExecutionPlan;
+  let workflowDefinition = flowDefinition;
 
   if (workflow.status === WorkFlowStatus.PUBLISHED) {
     if (!workflow.executionPlan) {
       throw new Error("no execution plan found in published workflow  ");
     }
     executionPlan = JSON.parse(workflow.executionPlan);
+    workflowDefinition = workflow.definition;
   } else {
     // workflow is a draft
     if (!flowDefinition) {
@@ -70,10 +72,10 @@ export async function RunWorkflow(form: {
       status: WorkflowExecutionStatus.PENDING,
       startedAt: new Date(),
       trigger: WorkflowExecutionTrigger.MANUAL,
-      definition: flowDefinition,
+      definition: workflowDefinition,
       phases: {
-        create: executionPlan.flatMap((phase) =>
-          phase.nodes.flatMap((node) => {
+        create: executionPlan.flatMap((phase) => {
+          return phase.nodes.flatMap((node) => {
             const task = TaskRegistry[node.data.type];
             if (!task) {
               throw new Error(
@@ -87,8 +89,8 @@ export async function RunWorkflow(form: {
               node: JSON.stringify(node),
               name: task.label,
             };
-          })
-        ),
+          });
+        }),
       },
     },
     select: { id: true, phases: true },
