@@ -19,11 +19,16 @@ model Workflow {
   definition    String
   executionPlan String?
   creditsCost   Int     @default(0)
-  status        String // DRAFT | PUBLISHED
+
+  cron String? // * * * * *
+
+  status String // DRAFT | PUBLISHED
 
   lastRunAt     DateTime?
   lastRunId     String?
   lastRunStatus String?
+
+  nextRunAt    DateTime?
 
   createdAt  DateTime            @default(now())
   updateAt   DateTime            @updatedAt
@@ -34,10 +39,11 @@ model Workflow {
 }
 
 model WorkflowExecution {
-  id          String    @id @default(cuid())
-  workflowId  String
-  userId      String
-  trigger     String
+  id         String @id @default(cuid())
+  workflowId String
+  userId     String
+  trigger    String
+
   status      String
   createdAt   DateTime  @default(now())
   startedAt   DateTime?

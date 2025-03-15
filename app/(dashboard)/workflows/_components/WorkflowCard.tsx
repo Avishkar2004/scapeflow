@@ -6,8 +6,12 @@ import { cn } from "@/lib/utils";
 import { WorkFlowStatus } from "@/types/workflow";
 import { Workflow } from "@prisma/client";
 import {
+  CoinsIcon,
+  CornerDownRight,
+  CornerDownRightIcon,
   FileTextIcon,
   MoreVerticalIcon,
+  MoveRightIcon,
   PlaneIcon,
   ShuffleIcon,
   TrashIcon,
@@ -25,6 +29,8 @@ import TooltipWrapper from "@/components/TooltipWrapper";
 import { useState } from "react";
 import DeleteWorkflowDialog from "./DeleteWorkflowDialog";
 import RunBtn from "./RunBtn";
+import SchedulerDialog from "./SchedulerDialog";
+import { Badge } from "@/components/ui/badge";
 
 const statusColors = {
   [WorkFlowStatus.DRAFT]: "bg-yellow-400 text-yellow-600",
@@ -64,6 +70,12 @@ const WorkflowCard = ({ workflow }: { workflow: Workflow }) => {
                 </span>
               )}
             </h3>
+            <ScheduleSection
+              isDraft={isDraft}
+              creditsCost={workflow.creditsCost}
+              workflowId={workflow.id}
+              cron={workflow.cron}
+            />
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -132,6 +144,39 @@ function WorkflowActions({
         </DropdownMenuContent>
       </DropdownMenu>
     </>
+  );
+}
+
+function ScheduleSection({
+  isDraft,
+  creditsCost,
+  workflowId,
+  cron,
+}: {
+  isDraft: boolean;
+  creditsCost: number;
+  workflowId: string;
+  cron: string | null;
+}) {
+  if (isDraft) return null;
+  return (
+    <div className="flex items-center gap-2">
+      <CornerDownRightIcon className="h-4 w-4 text-muted-foreground" />
+      <SchedulerDialog workflowId={workflowId} cron={cron} />
+      <MoveRightIcon className="h-4 w-4 text-muted-foreground" />
+      <TooltipWrapper content="Credit consumption for full run">
+        <span>
+          <div className="flex items-center gap-3">
+            <Badge
+              variant="outline"
+              className="space-x-2 text-muted-foreground rounded-sm"
+            />
+            <CoinsIcon className="h-4 w-4" />
+            <span className="text-sm">{creditsCost}</span>
+          </div>
+        </span>
+      </TooltipWrapper>
+    </div>
   );
 }
 
