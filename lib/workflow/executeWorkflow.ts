@@ -13,7 +13,7 @@ import { LogCollector } from "@/types/log";
 import { createCollector } from "../log";
 import { revalidatePath } from "next/cache";
 
-export async function ExecutionWorkflow(executionId: string) {
+export async function ExecutionWorkflow(executionId: string, nextRunAt?: Date) {
   const execution = await prisma.workflowExecution.findUnique({
     where: { id: executionId },
     include: { workflow: true, phases: true },
@@ -29,7 +29,11 @@ export async function ExecutionWorkflow(executionId: string) {
     phases: {},
   };
 
-  await initializeWorkflowExecution(executionId, execution.workflowId);
+  await initializeWorkflowExecution(
+    executionId,
+    execution.workflowId,
+    nextRunAt
+  );
 
   // TODO: initialize workflow status
   await initializePhaseStatuses(execution);
@@ -66,7 +70,8 @@ export async function ExecutionWorkflow(executionId: string) {
 
 async function initializeWorkflowExecution(
   executionId: string,
-  workflowId: string
+  workflowId: string,
+  nextRunAt?: Date
 ) {
   await prisma.workflowExecution.update({
     where: { id: executionId },
@@ -83,6 +88,7 @@ async function initializeWorkflowExecution(
       lastRunAt: new Date(),
       lastRunStatus: WorkflowExecutionStatus.RUNNING,
       lastRunId: executionId,
+      ...(nextRunAt && { nextRunAt }),
     },
   });
 }

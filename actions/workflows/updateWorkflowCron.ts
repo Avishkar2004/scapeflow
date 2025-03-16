@@ -34,6 +34,5 @@ export async function UpdateWorkflowCron({
     console.error("Invalid cron:", error.message);
     throw new Error("Invalid cron expression");
   }
-
   revalidatePath("/workflows");
 }

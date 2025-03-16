@@ -39,6 +39,7 @@ const statusColors = {
 
 const WorkflowCard = ({ workflow }: { workflow: Workflow }) => {
   const isDraft = workflow.status === WorkFlowStatus.DRAFT;
+  const [cron, setCron] = useState<string | null>(workflow.cron);
 
   return (
     <Card className="border border-separate shadow-sm rounded-lg overflow-hidden hover:shadow-md dark:shadow-primary/30">
@@ -74,7 +75,8 @@ const WorkflowCard = ({ workflow }: { workflow: Workflow }) => {
               isDraft={isDraft}
               creditsCost={workflow.creditsCost}
               workflowId={workflow.id}
-              cron={workflow.cron}
+              cron={cron}
+              setCron={setCron} // Pass setCron to update instantly
             />
           </div>
         </div>
@@ -152,11 +154,13 @@ function ScheduleSection({
   creditsCost,
   workflowId,
   cron,
+  setCron,
 }: {
   isDraft: boolean;
   creditsCost: number;
   workflowId: string;
   cron: string | null;
+  setCron: (cron: string | null) => void;
 }) {
   if (isDraft) return null;
   return (
@@ -165,6 +169,7 @@ function ScheduleSection({
       <SchedulerDialog
         workflowId={workflowId}
         cron={cron}
+        setCron={setCron} // Pass setCron
         key={`${cron}-${workflowId}`}
       />
       <MoveRightIcon className="h-4 w-4 text-muted-foreground" />
