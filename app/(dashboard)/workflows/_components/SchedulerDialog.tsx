@@ -20,6 +20,9 @@ import { UpdateWorkflowCron } from "@/actions/workflows/updateWorkflowCron";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import cronstrue from "cronstrue";
+import parser from "cron-parser";
+import { RemoveWorkflowSchedule } from "@/actions/workflows/removeWorkflowSchedule";
+import { Separator } from "@/components/ui/separator";
 
 export default function SchedulerDialog(props: {
   cron: string | null;
@@ -39,8 +42,18 @@ export default function SchedulerDialog(props: {
     },
   });
 
+  const removeSchedulermutation = useMutation({
+    mutationFn: RemoveWorkflowSchedule,
+    onSuccess: () => {
+      toast.success("Schedule updated successfully", { id: "cron" });
+    },
+    onError: () => {
+      toast.error("Something went wrong", { id: "cron" });
+    },
+  });
   useEffect(() => {
     try {
+      parser.parse(cron);
       const humanCronstr = cronstrue.toString(cron);
       setValidCron(true);
       setreadableCron(humanCronstr);
@@ -49,21 +62,28 @@ export default function SchedulerDialog(props: {
     }
   }, [cron]);
 
+  const workflowHasValidCron = props.cron && props.cron.length > 0;
+  const readableSavedCron =
+    workflowHasValidCron && cronstrue.toString(props.cron!);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button
           variant={"link"}
           size={"sm"}
-          className={cn("text-sm p-0 h-auto")}
+          className={cn(
+            "text-sm p-0 h-auto text-orange-500",
+            workflowHasValidCron && "text-primary"
+          )}
         >
-          {validCron && (
+          {workflowHasValidCron && (
             <div className="flex items-center gap-2">
               <ClockIcon />
-              {readableCron}
+              {readableSavedCron}
             </div>
           )}
-          {!validCron && (
+          {!workflowHasValidCron && (
             <div className="flex items-center gap-1">
               <TriangleAlertIcon className="w-3 h-3" /> Set Schedule
             </div>
@@ -93,6 +113,27 @@ export default function SchedulerDialog(props: {
           >
             {validCron ? readableCron : "not a valid cron expression"}
           </div>
+
+          {workflowHasValidCron && (
+            <DialogClose asChild>
+              <div className="px-8">
+                <Button
+                  className="w-full text-destructive border-destructive hover:text-destructive"
+                  variant={"outline"}
+                  disabled={
+                    mutation.isPending || removeSchedulermutation.isPending
+                  }
+                  onClick={() => {
+                    toast.loading("Removing schedule..", { id: "cron" });
+                    removeSchedulermutation.mutate(props.workflowId);
+                  }}
+                >
+                  Remove current Schedule
+                </Button>
+                <Separator className="my-4" />
+              </div>
+            </DialogClose>
+          )}
         </div>
         <DialogFooter className="px-6 gap-2">
           <DialogClose asChild>
@@ -103,7 +144,7 @@ export default function SchedulerDialog(props: {
           <DialogClose asChild>
             <Button
               className="w-full"
-              disabled={mutation.isPending}
+              disabled={mutation.isPending || !validCron}
               onClick={() => {
                 toast.loading("Saving...", { id: "cron" });
                 mutation.mutate({

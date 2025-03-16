@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import parser from "cron-parser"; // ✅ Use default import
+import { revalidatePath } from "next/cache";
 
 export async function UpdateWorkflowCron({
   id,
@@ -33,4 +34,6 @@ export async function UpdateWorkflowCron({
     console.error("Invalid cron:", error.message);
     throw new Error("Invalid cron expression");
   }
+
+  revalidatePath("/workflows");
 }
