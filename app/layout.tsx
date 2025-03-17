@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/AppProviders";
 import { ClerkProvider } from "@clerk/nextjs";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,7 +29,9 @@ export default function RootLayout({
             },
           }}
         >
-          <AppProviders>{children}</AppProviders>
+          <TooltipProvider>
+            <AppProviders>{children}</AppProviders>
+          </TooltipProvider>
         </ClerkProvider>
       </body>
     </html>

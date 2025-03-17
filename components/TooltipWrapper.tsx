@@ -13,12 +13,17 @@ interface Props {
   side?: "top" | "bottom" | "left" | "right";
 }
 
-const TooltipWrapper = (props: Props) => {
+const TooltipWrapper = ({ children, content, side }: Props) => {
+  if (!content) return children;
+
   return (
     <TooltipProvider delayDuration={0}>
       <Tooltip>
-        <TooltipTrigger asChild>{props.children}</TooltipTrigger>
-        <TooltipContent side={props.side}>{props.content}</TooltipContent>
+        <TooltipTrigger asChild>
+          {/* Ensure interactive wrapper */}
+          {typeof children === "string" ? <span>{children}</span> : children}
+        </TooltipTrigger>
+        <TooltipContent side={side}>{content}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

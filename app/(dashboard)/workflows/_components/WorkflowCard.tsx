@@ -27,7 +27,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import TooltipWrapper from "@/components/TooltipWrapper";
 import { useState } from "react";
 import DeleteWorkflowDialog from "./DeleteWorkflowDialog";
 import RunBtn from "./RunBtn";
@@ -39,6 +38,7 @@ import ExecutionStatusIndicator, {
 import { format, formatDistanceToNow } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import DuplicateWorkflowDialog from "./DuplicateWorkflowDialog";
+import TooltipWrapper from "@/components/TooltipWrapper";
 
 const statusColors = {
   [WorkFlowStatus.DRAFT]: "bg-yellow-400 text-yellow-600",
@@ -67,12 +67,15 @@ const WorkflowCard = ({ workflow }: { workflow: Workflow }) => {
           </div>
           <div>
             <h3 className="text-base font-bold text-muted-foreground flex items-center">
-              <Link
-                href={`/workflow/editor/${workflow.id}`}
-                className="flex items-center hover:underline"
-              >
-                {workflow.name}
-              </Link>
+              <button>
+                <Link
+                  href={`/workflow/editor/${workflow.id}`}
+                  className="hover:underline"
+                >
+                  {workflow.name}
+                </Link>
+              </button>
+
               {isDraft && (
                 <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
                   Draft

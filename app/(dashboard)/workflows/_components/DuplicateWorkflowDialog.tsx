@@ -31,7 +31,6 @@ import { cn } from "@/lib/utils";
 
 const DuplicateWorkflowDialog = ({ workflowId }: { workflowId?: string }) => {
   const [open, setOpen] = useState(false);
-
   const form = useForm<duplicateWorkflowSchemaType>({
     resolver: zodResolver(duplicateWorkflowSchema),
     defaultValues: {
