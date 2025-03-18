@@ -226,6 +226,7 @@ async function executePhase(
   // ✅ Corrected syntax
   const runFn = ExecuteRegistry[node.data.type];
   if (!runFn) {
+    logCollector.error(`not found executor for ${node.data.type}`);
     return false;
   }
   const ExecutionEnvironment: ExecutionEnvironment<any> =

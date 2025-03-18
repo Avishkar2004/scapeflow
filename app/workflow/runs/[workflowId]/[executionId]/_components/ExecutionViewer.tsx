@@ -62,6 +62,12 @@ export default function ExecutionViewer({
       q.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false,
   });
 
+  const phaseDetails = useQuery({
+    queryKey: ["phaseDetails", selectPhase, query.data?.status],
+    enabled: selectPhase !== null,
+    queryFn: () => GetWorkflowPhaseDetails(selectPhase!),
+  });
+
   const isRunning = query.data?.status === WorkflowExecutionStatus.RUNNING;
 
   useEffect(() => {
@@ -82,11 +88,7 @@ export default function ExecutionViewer({
     setSelectPhase(phaseToSelect.id);
   }, [query.data?.phases, isRunning, setSelectPhase]);
 
-  const phaseDetails = useQuery({
-    queryKey: ["phaseDetails", selectPhase],
-    enabled: selectPhase !== null,
-    queryFn: () => GetWorkflowPhaseDetails(selectPhase!),
-  });
+  
 
   const duration = DatesToDurationString(
     query.data?.completedAt,
