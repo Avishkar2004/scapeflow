@@ -47,8 +47,13 @@ Value:- test
 
  Visibility:- Visible
 
+5 then get html from text :-
+
+6. extract text from element :-
+Selector :- body > div > div:nth-child(2) > div.col-md-8 > div:nth-child(1) > span.text
 
 
+7. devlive via Webhook
 
 
 5. Value :-
