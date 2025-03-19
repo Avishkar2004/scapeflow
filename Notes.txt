@@ -24,7 +24,7 @@ Selectors:- body > div.container > div > div.col-md-8 > h1 > a
 
 For Fill input:-
 
-Website URl:-
+1. Website URl:-
 
 https://quotes.toscrape.com/login
 
@@ -41,21 +41,23 @@ Selector:- #password
 Value:- test
 
 
-4. Wait for element
+4. Click element:-
+
+body > div > form > input.btn.btn-primary
+
+5. Wait for element
 
  Selector:- body > div > div.row.header-box > div.col-md-4 > p > a
 
  Visibility:- Visible
 
-5 then get html from text :-
+5 then get html from text Connect web page to web page:-
 
 6. extract text from element :-
 Selector :- body > div > div:nth-child(2) > div.col-md-8 > div:nth-child(1) > span.text
 
 
 7. devlive via Webhook
+Target URL:- https://httpbin.org/post
 
-
-5. Value :-
-save and execute:-
-test
+8. save and execute

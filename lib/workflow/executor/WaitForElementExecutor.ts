@@ -6,12 +6,12 @@ export async function WaitForElementExecutor(
 ): Promise<boolean> {
   try {
     const selector = environment.getInput("Selector");
-    if (selector) {
+    if (!selector) {
       environment.log.error("input-> selector is not defined");
     }
 
     const visibility = environment.getInput("Visibility");
-    if (visibility) {
+    if (!visibility) {
       environment.log.error("input-> visibility is not defined");
     }
 

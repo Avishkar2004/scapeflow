@@ -23,16 +23,13 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -73,12 +70,11 @@ export default function ExecutionViewer({
   useEffect(() => {
     // While running we auto-select the current running phase in the sidebar
     const phase = query.data?.phases || [];
-    if (isRunning) {
-      // Select the last executed phase
-      const phaseToSelect = phase.toSorted((a, b) =>
+    if (isRunning && phase.length) {
+      const phaseToSelect = [...phase].sort((a, b) =>
         a.startedAt! > b.startedAt! ? -1 : 1
       )[0];
-      setSelectPhase(phaseToSelect.id);
+      if (phaseToSelect) setSelectPhase(phaseToSelect.id);
       return;
     }
 
@@ -87,8 +83,6 @@ export default function ExecutionViewer({
     )[0];
     setSelectPhase(phaseToSelect.id);
   }, [query.data?.phases, isRunning, setSelectPhase]);
-
-  
 
   const duration = DatesToDurationString(
     query.data?.completedAt,

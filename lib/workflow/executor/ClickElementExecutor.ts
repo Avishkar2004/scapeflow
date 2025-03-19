@@ -6,7 +6,7 @@ export async function ClickElementExecutor(
 ): Promise<boolean> {
   try {
     const selector = environment.getInput("Selector");
-    if (selector) {
+    if (!selector) {
       environment.log.error("input-> selector is not defined");
     }
 

@@ -6,12 +6,12 @@ export async function DeliverViaWebhookExecutor(
 ): Promise<boolean> {
   try {
     const targetUrl = environment.getInput("Target URL");
-    if (targetUrl) {
+    if (!targetUrl) {
       environment.log.error("input-> targetUrl is not defined");
     }
 
     const body = environment.getInput("Body");
-    if (body) {
+    if (!body) {
       environment.log.error("input-> body is not defined");
     }
 
