@@ -2,6 +2,7 @@ import { ExecutionEnvironment } from "@/types/executor";
 import { ExtractDataWithAITask } from "../task/ExtractDataWithAI";
 import prisma from "@/lib/prisma";
 import { symmetricDecrypt } from "@/lib/encryption";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function ExtractDataWithAIExecutor(
   environment: ExecutionEnvironment<typeof ExtractDataWithAITask>
@@ -10,16 +11,19 @@ export async function ExtractDataWithAIExecutor(
     const credentials = environment.getInput("Credentials");
     if (!credentials) {
       environment.log.error("input->credentials is not defined");
+      return false;
     }
 
     const prompt = environment.getInput("Prompt");
     if (!prompt) {
       environment.log.error("input->prompt is not defined");
+      return false;
     }
 
     const content = environment.getInput("Content");
     if (!content) {
       environment.log.error("input->content is not defined");
+      return false;
     }
 
     const credential = await prisma.credential.findUnique({
@@ -37,14 +41,31 @@ export async function ExtractDataWithAIExecutor(
       return false;
     }
 
-    const mockExtractedData = {
-      usernameSelector: "#username",
-      passwordSelector: "#password",
-      loginSelector: "body > div > form > input.btn.btn-primary",
-    };
+    // ✅ Initialize Gemini AI
+    const genAI = new GoogleGenerativeAI(plainCredentialValue);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-    environment.setOutput("Extracteed data", JSON.stringify(mockExtractedData));
+    // ✅ Removed "system" role, and passed instructions as the first user message
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `You are a web scraper helper that extracts data from HTML or text. You will be given a piece of text or HTML content as input, along with a prompt specifying the data to extract. The response should always be a valid JSON array or object containing the extracted data, without any additional text. If no data is found, return an empty JSON array.\n\nContent:\n${content}\n\nPrompt:\n${prompt}`,
+            },
+          ],
+        },
+      ],
+    });
 
+    const response = result.response.text();
+    if (!response) {
+      environment.log.error("empty response from AI");
+      return false;
+    }
+
+    environment.setOutput("Extracted data", response);
     return true;
   } catch (error: any) {
     environment.log.error(error.message);

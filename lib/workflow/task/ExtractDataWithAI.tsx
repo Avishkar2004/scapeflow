@@ -29,7 +29,7 @@ export const ExtractDataWithAITask = {
   ] as const,
   outputs: [
     {
-      name: "Extracteed data",
+      name: "Extracted data",
       type: TaskParamType.STRING,
     },
   ] as const,
