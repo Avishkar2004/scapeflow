@@ -28,7 +28,7 @@ model Workflow {
   lastRunId     String?
   lastRunStatus String?
 
-  nextRunAt    DateTime?
+  nextRunAt DateTime?
 
   createdAt  DateTime            @default(now())
   updateAt   DateTime            @updatedAt
@@ -89,4 +89,15 @@ model ExecutionLog {
 model UserBalance {
   userId  String @id
   credits Int    @default(0)
+}
+
+model Credential {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+  value  String
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, name])
 }
