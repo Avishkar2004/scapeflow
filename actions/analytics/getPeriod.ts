@@ -5,6 +5,7 @@ import { Period } from "@/types/analytics";
 import { auth } from "@clerk/nextjs/server";
 
 export async function GetPeriod() {
+  
   const { userId } = await auth();
   if (!userId) {
     throw new Error("unauthenticated");
