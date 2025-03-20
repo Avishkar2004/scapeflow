@@ -52,12 +52,14 @@ export async function ExtractDataWithAIExecutor(
           role: "user",
           parts: [
             {
-              text: `You are a web scraper helper that extracts data from HTML or text. You will be given a piece of text or HTML content as input, along with a prompt specifying the data to extract. The response should always be a valid JSON array or object containing the extracted data, without any additional text. If no data is found, return an empty JSON array.\n\nContent:\n${content}\n\nPrompt:\n${prompt}`,
+              text: `You are a webscraper helper that extract data from HTML or text. You will be given piece of text or HTML content as input and also the prompt with the data you want to extract. The response should always be only the extracted data as a JSON array or object, without and additional words or explanation. Azalyze the input cafefully and extract data precisely bases on the prompt. If no data is found, return an empty JSON array. Work only with the provided content and ensure the output in always a valid JSON array without any surrounding text.\n\nContent:\n${content}\n\nPrompt:\n${prompt}`,
             },
           ],
         },
       ],
     });
+    environment.log.info("Works fine");
+    environment.log.info("Works fine");
 
     const response = result.response.text();
     if (!response) {
