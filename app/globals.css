@@ -46,6 +46,8 @@
     --radius: 0.5rem;
     --chart-1: 142 88% 28%;
     --chart-2: 140 74% 44%;
+    --chart-success: 140 74% 44%;
+    --chart-failed: 0 84% 60%;
   }
 
   .dark {
@@ -70,9 +72,10 @@
     --ring: 142.4 71.8% 29.2%;
     --chart-1: 142 88% 28%;
     --chart-2: 140 74% 44%;
+    --chart-success: 140 74% 50%;
+    --chart-failed: 0 84% 50%;
   }
 }
-
 
 @layer base {
   * {
@@ -92,3 +95,8 @@
     @apply !bg-accent;
   }
 }
+
+.react-flow__attribution {
+  background: transparent !important;
+}
+
