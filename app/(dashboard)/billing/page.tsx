@@ -5,6 +5,9 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Car, CoinsIcon } from "lucide-react";
 import ReactCountUpWrapper from "@/components/ReactCountUpWrapper";
 import CreditsPurchase from "./_components/CreditsPurchase";
+import { Period } from "@/types/analytics";
+import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
+import CreditUsageChart from "./_components/CreditUsageChart";
 
 export default function BillingPage() {
   return (
@@ -14,6 +17,9 @@ export default function BillingPage() {
         <BalanceCard />
       </Suspense>
       <CreditsPurchase />
+      <Suspense fallback={<Skeleton className="h-[300px]" />}>
+        <CreditUsageCard />
+      </Suspense>
     </div>
   );
 }
@@ -32,7 +38,6 @@ async function BalanceCard() {
               <ReactCountUpWrapper value={userBalance} />
             </p>
           </div>
-
           <CoinsIcon
             size={140}
             className="text-primary opacity-20 absolute bottom-0 right-0 "
@@ -46,5 +51,20 @@ async function BalanceCard() {
         </p>
       </CardFooter>
     </Card>
+  );
+}
+
+async function CreditUsageCard() {
+  const period: Period = {
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+  };
+  const data = await GetCreditUsageInPeriod(period);
+  return (
+    <CreditUsageChart
+      data={data}
+      title="Credits Consumed"
+      description="Daily credits consumed in the current month"
+    />
   );
 }
