@@ -2,12 +2,12 @@ import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Editor from "../../_components/Editor";
 
-interface PageProps {
-  params: {
-    workflowId: string;
-  };
+type Props = {
+  params: { workflowId: string }
+  searchParams: { [key: string]: string | string[] | undefined }
 }
-async function Page({ params }: PageProps) {
+
+export default async function Page({ params }: Props) {
   if (!params?.workflowId) return <div>Missing workflow ID</div>;
 
   const { userId } = await auth();
@@ -26,5 +26,3 @@ async function Page({ params }: PageProps) {
 
   return <Editor workflow={workflow} />;
 }
-
-export default Page;
