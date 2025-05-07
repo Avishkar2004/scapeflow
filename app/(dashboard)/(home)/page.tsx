@@ -11,19 +11,20 @@ import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
-const HomePage = async ({
-  searchParams,
-}: {
-  searchParams: { month?: string; year?: string };
-}) => {
+type Props = {
+  params: { [key: string]: string | string[] | undefined }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export default async function HomePage({ searchParams }: Props) {
   const currentDate = new Date();
 
   // Ensure searchParams is awaited
   const month = searchParams?.month
-    ? parseInt(searchParams.month)
+    ? parseInt(searchParams.month as string)
     : currentDate.getMonth();
   const year = searchParams?.year
-    ? parseInt(searchParams.year)
+    ? parseInt(searchParams.year as string)
     : currentDate.getFullYear();
 
   const period: Period = { month, year };
@@ -49,7 +50,7 @@ const HomePage = async ({
       </div>
     </div>
   );
-};
+}
 
 async function PeriodSelectorWrapper({
   SelectedPeriod,
@@ -118,5 +119,3 @@ async function CreditsUsageInPeriod({
     />
   );
 }
-
-export default HomePage;
