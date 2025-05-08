@@ -11,14 +11,13 @@ import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
-interface PageProps {
+export default async function HomePage({
+  searchParams,
+}: {
   searchParams: { [key: string]: string | string[] | undefined }
-}
-
-export default async function HomePage({ searchParams }: PageProps) {
+}) {
   const currentDate = new Date();
 
-  // Ensure searchParams is awaited
   const month = searchParams?.month
     ? parseInt(searchParams.month as string)
     : currentDate.getMonth();
