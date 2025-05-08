@@ -1,5 +1,5 @@
-import { GetPeriod } from "@/actions/analytics/getPeriod";
 import React, { Suspense } from "react";
+import { GetPeriod } from "@/actions/analytics/getPeriod";
 import PeriodSelector from "./_components/PeriodSelector";
 import { Period } from "@/types/analytics";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,17 +10,18 @@ import { GetWorflowExecutionStatus } from "@/actions/analytics/GetWorflowExecuti
 import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
+import { type Metadata } from "next";
 
-interface SearchParams {
-  month?: string;
-  year?: string;
+interface HomePageProps {
+  searchParams: {
+    month?: string;
+    year?: string;
+  };
 }
 
 export default async function HomePage({
   searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
+}: HomePageProps) {
   const currentDate = new Date();
 
   // Safely parse searchParams with type checking
