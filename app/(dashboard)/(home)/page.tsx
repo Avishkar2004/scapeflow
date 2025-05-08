@@ -68,13 +68,11 @@ async function StatsCards({ SelectedPeriod }: { SelectedPeriod: Period }) {
         value={data.workflowExecution}
         icon={CirclePlayIcon}
       />
-
       <StatsCard
         title="Phase executions"
         value={data.phaseExecutions}
         icon={WaypointsIcon}
       />
-
       <StatsCard
         title="Credits consumed"
         value={data.creditsConsumed}
@@ -112,7 +110,7 @@ async function CreditsUsageInPeriod({
   return (
     <CreditUsageChart
       data={data}
-      title="Daily Credits pent"
+      title="Daily Credits spent"
       description="Daily credit consumed in selected period"
     />
   );
