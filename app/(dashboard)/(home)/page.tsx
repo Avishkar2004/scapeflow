@@ -11,12 +11,11 @@ import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
-type Props = {
-  params: { [key: string]: string | string[] | undefined }
+interface PageProps {
   searchParams: { [key: string]: string | string[] | undefined }
 }
 
-export default async function HomePage({ searchParams }: Props) {
+export default async function HomePage({ searchParams }: PageProps) {
   const currentDate = new Date();
 
   // Ensure searchParams is awaited

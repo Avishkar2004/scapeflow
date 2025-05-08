@@ -10,7 +10,6 @@ const { COMPLETED, FAILED, PENDING, RUNNING } = WorkflowExecutionStatus;
 
 export async function GetStatsCardsValues(period: Period) {
   const { userId } = await auth();
-
   // Return default values for unauthenticated users
   if (!userId) {
     return {
