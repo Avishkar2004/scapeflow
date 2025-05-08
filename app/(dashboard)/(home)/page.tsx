@@ -1,3 +1,5 @@
+// app/(dashboard)/(home)/page.tsx
+
 import React, { Suspense } from "react";
 import { GetPeriod } from "@/actions/analytics/getPeriod";
 import PeriodSelector from "./_components/PeriodSelector";
@@ -10,30 +12,25 @@ import { GetWorflowExecutionStatus } from "@/actions/analytics/GetWorflowExecuti
 import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
-import { type Metadata } from "next";
 
-interface HomePageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
-}
+type PageProps = {
+  searchParams?: {
+    month?: string;
+    year?: string;
+  };
+};
 
-export default async function HomePage({ searchParams }: HomePageProps) {
+export default async function HomePage({ searchParams }: PageProps) {
   const currentDate = new Date();
 
-  // Safely parse month and year
-  const monthParam = Array.isArray(searchParams.month)
-    ? searchParams.month[0]
-    : searchParams.month;
-  const yearParam = Array.isArray(searchParams.year)
-    ? searchParams.year[0]
-    : searchParams.year;
-
   const month =
-    monthParam && typeof monthParam === "string"
-      ? parseInt(monthParam)
-      : currentDate.getMonth() + 1; // getMonth is 0-indexed
+    searchParams?.month && typeof searchParams.month === "string"
+      ? parseInt(searchParams.month)
+      : currentDate.getMonth() + 1;
+
   const year =
-    yearParam && typeof yearParam === "string"
-      ? parseInt(yearParam)
+    searchParams?.year && typeof searchParams.year === "string"
+      ? parseInt(searchParams.year)
       : currentDate.getFullYear();
 
   const period: Period = { month, year };
