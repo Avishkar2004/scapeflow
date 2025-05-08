@@ -5,15 +5,18 @@ import { auth } from "@clerk/nextjs/server";
 
 export async function GetWorkflowsForUser() {
   const { userId } = await auth();
+
+  //eturn empty array for unauthenticated users
   if (!userId) {
-    throw new Error("unauthenticated");
+    return [];
   }
+
   return prisma.workflow.findMany({
     where: {
       userId,
     },
     orderBy: {
-      createdAt: "asc",
+      createdAt: "desc",
     },
   });
 }

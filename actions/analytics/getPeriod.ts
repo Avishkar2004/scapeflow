@@ -6,9 +6,13 @@ import { auth } from "@clerk/nextjs/server";
 
 export async function GetPeriod() {
   const { userId } = await auth();
+
+  // For unauthenticated users, return current month and year
   if (!userId) {
-    throw new Error("unauthenticated");
+    const currentDate = new Date();
+    return [{ year: currentDate.getFullYear(), month: currentDate.getMonth() }];
   }
+
   const years = await prisma.workflowExecution.aggregate({
     where: { userId },
     _min: { startedAt: true },

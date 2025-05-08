@@ -10,9 +10,16 @@ const { COMPLETED, FAILED, PENDING, RUNNING } = WorkflowExecutionStatus;
 
 export async function GetStatsCardsValues(period: Period) {
   const { userId } = await auth();
+
+  // Return default values for unauthenticated users
   if (!userId) {
-    throw new Error("unauthenticated");
+    return {
+      workflowExecution: 0,
+      creditsConsumed: 0,
+      phaseExecutions: 0,
+    };
   }
+
   const dateRange = PeriodToDateRange(period);
   const executions = await prisma.workflowExecution.findMany({
     where: {

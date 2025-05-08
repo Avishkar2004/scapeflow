@@ -20,9 +20,19 @@ const { COMPLETED, FAILED } = ExectionPhaseStatus;
 export async function GetCreditUsageInPeriod(period: Period) {
   const { userId } = await auth();
 
+  // Return empty data for unauthenticated users
   if (!userId) {
-    throw new Error("unauthenticated");
+    const dateRange = PeriodToDateRange(period);
+    return eachDayOfInterval({
+      start: dateRange.startDate,
+      end: dateRange.endDate,
+    }).map((date) => ({
+      date: format(date, "yyyy-MM-dd"),
+      sucess: 0,
+      failed: 0,
+    }));
   }
+
   const dateRange = PeriodToDateRange(period);
   const executionPhase = await prisma.executionPhase.findMany({
     where: {

@@ -18,9 +18,19 @@ type Stats = Record<
 export async function GetWorflowExecutionStatus(period: Period) {
   const { userId } = await auth();
 
+  // Return empty data for unauthenticated users
   if (!userId) {
-    throw new Error("unauthenticated");
+    const dateRange = PeriodToDateRange(period);
+    return eachDayOfInterval({
+      start: dateRange.startDate,
+      end: dateRange.endDate,
+    }).map((date) => ({
+      date: format(date, "yyyy-MM-dd"),
+      sucess: 0,
+      failed: 0,
+    }));
   }
+
   const dateRange = PeriodToDateRange(period);
   const executions = await prisma.workflowExecution.findMany({
     where: {
