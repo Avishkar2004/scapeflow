@@ -22,12 +22,14 @@ export default async function HomePage({
   const monthParam = searchParams?.month;
   const yearParam = searchParams?.year;
 
-  const month = monthParam && typeof monthParam === 'string'
-    ? parseInt(monthParam)
-    : currentDate.getMonth();
-  const year = yearParam && typeof yearParam === 'string'
-    ? parseInt(yearParam)
-    : currentDate.getFullYear();
+  const month =
+    monthParam && typeof monthParam === "string"
+      ? parseInt(monthParam)
+      : currentDate.getMonth();
+  const year =
+    yearParam && typeof yearParam === "string"
+      ? parseInt(yearParam)
+      : currentDate.getFullYear();
 
   const period: Period = { month, year };
 

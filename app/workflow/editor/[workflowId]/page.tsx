@@ -4,9 +4,9 @@ import Editor from "../../_components/Editor";
 
 interface PageProps {
   params: {
-    workflowId: string
-  }
-  searchParams: { [key: string]: string | string[] | undefined }
+    workflowId: string;
+  };
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
 export default async function Page({ params }: PageProps) {
