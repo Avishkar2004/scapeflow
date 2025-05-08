@@ -10,11 +10,12 @@ import { GetWorflowExecutionStatus } from "@/actions/analytics/GetWorflowExecuti
 import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
-import { PageProps } from "next";
 
 export default async function HomePage({
   searchParams,
-}: PageProps) {
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const currentDate = new Date();
 
   // Safely parse searchParams with type checking
