@@ -11,13 +11,16 @@ import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
-type Props = {
-  searchParams: { [key: string]: string | string[] | undefined }
+interface SearchParams {
+  month?: string;
+  year?: string;
 }
 
 export default async function HomePage({
   searchParams,
-}: Props) {
+}: {
+  searchParams: SearchParams;
+}) {
   const currentDate = new Date();
 
   // Safely parse searchParams with type checking
