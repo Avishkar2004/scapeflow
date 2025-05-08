@@ -14,15 +14,19 @@ import CreditUsageChart from "../billing/_components/CreditUsageChart";
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Record<string, string | string[] | undefined>;
 }) {
   const currentDate = new Date();
 
-  const month = searchParams?.month
-    ? parseInt(searchParams.month as string)
+  // Safely parse searchParams with type checking
+  const monthParam = searchParams?.month;
+  const yearParam = searchParams?.year;
+
+  const month = monthParam && typeof monthParam === 'string'
+    ? parseInt(monthParam)
     : currentDate.getMonth();
-  const year = searchParams?.year
-    ? parseInt(searchParams.year as string)
+  const year = yearParam && typeof yearParam === 'string'
+    ? parseInt(yearParam)
     : currentDate.getFullYear();
 
   const period: Period = { month, year };
