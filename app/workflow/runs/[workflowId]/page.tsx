@@ -2,18 +2,24 @@ import Topbar from "../../_components/topbar/Topbar";
 import { GetWorkflowExecutions } from "@/actions/workflows/GetWorkflowExecutions";
 import { Suspense } from "react";
 import { InboxIcon, Loader2Icon } from "lucide-react";
-import { waitFor } from "@/lib/helper/waitFor";
 import ExecutionTable from "./_components/ExecutionTable";
 
-export default function ExecutionPage({
+type PageProps = {
+  params: Promise<{
+    workflowId: string;
+  }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function ExecutionPage({
   params,
-}: {
-  params: { workflowId: string };
-}) {
+}: PageProps) {
+  const resolvedParams = await params;
+  
   return (
     <div className="h-full w-full overflow-auto">
       <Topbar
-        workflowId={params.workflowId}
+        workflowId={resolvedParams.workflowId}
         hideButtons
         title="All runs"
         subtitle="List of all your workflow runs"
@@ -25,7 +31,7 @@ export default function ExecutionPage({
           </div>
         }
       >
-        <ExecutionTableWrapper workflowId={params.workflowId} />
+        <ExecutionTableWrapper workflowId={resolvedParams.workflowId} />
       </Suspense>
     </div>
   );
@@ -34,7 +40,7 @@ export default function ExecutionPage({
 async function ExecutionTableWrapper({ workflowId }: { workflowId: string }) {
   const executions = await GetWorkflowExecutions(workflowId);
   if (!executions) {
-    return <div>No Date</div>;
+    return <div>No Data</div>;
   }
 
   if (executions.length === 0) {
@@ -57,7 +63,9 @@ async function ExecutionTableWrapper({ workflowId }: { workflowId: string }) {
     );
   }
 
-  return <div className="container py-6 w-full">
-    <ExecutionTable workflowId={workflowId} initialData={executions}/>
-  </div>;
+  return (
+    <div className="container py-6 w-full">
+      <ExecutionTable workflowId={workflowId} initialData={executions} />
+    </div>
+  );
 }

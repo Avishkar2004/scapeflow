@@ -13,31 +13,30 @@ import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
 
+export const dynamic = "force-dynamic";
+
 type PageProps = {
-  searchParams?: {
-    month?: string;
-    year?: string;
-  };
+  searchParams: Promise<{
+    [key: string]: string | string[] | undefined;
+  }>;
 };
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
+export default async function HomePage({ searchParams }: PageProps) {
   const currentDate = new Date();
+  const resolvedParams = await searchParams;
 
   const monthParam =
-    typeof searchParams?.month === "string"
-      ? searchParams.month
-      : Array.isArray(searchParams?.month)
-      ? searchParams.month[0]
+    typeof resolvedParams?.month === "string"
+      ? resolvedParams.month
+      : Array.isArray(resolvedParams?.month)
+      ? resolvedParams.month[0]
       : undefined;
+
   const yearParam =
-    typeof searchParams?.year === "string"
-      ? searchParams.year
-      : Array.isArray(searchParams?.year)
-      ? searchParams.year[0]
+    typeof resolvedParams?.year === "string"
+      ? resolvedParams.year
+      : Array.isArray(resolvedParams?.year)
+      ? resolvedParams.year[0]
       : undefined;
 
   const month = monthParam ? parseInt(monthParam) : currentDate.getMonth();

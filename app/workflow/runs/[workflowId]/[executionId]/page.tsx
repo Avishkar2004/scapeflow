@@ -4,20 +4,25 @@ import { Loader2Icon } from "lucide-react";
 import { Suspense } from "react";
 import ExecutionViewer from "./_components/ExecutionViewer";
 
-export default function ExectionViewerPage({
-  params,
-}: {
-  params: {
+type PageProps = {
+  params: Promise<{
     executionId: string;
     workflowId: string;
-  };
-}) {
+  }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function ExectionViewerPage({
+  params,
+}: PageProps) {
+  const resolvedParams = await params;
+  
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden">
       <Topbar
-        workflowId={params.workflowId}
+        workflowId={resolvedParams.workflowId}
         title="Workflow run details"
-        subtitle={`Run ID: ${params.executionId}`}
+        subtitle={`Run ID: ${resolvedParams.executionId}`}
         hideButtons
       />
       <section className="flex h-full overflow-auto">
@@ -28,7 +33,7 @@ export default function ExectionViewerPage({
             </div>
           }
         >
-          <ExecutionViewerWrapper executionId={params.executionId} />
+          <ExecutionViewerWrapper executionId={resolvedParams.executionId} />
         </Suspense>
       </section>
     </div>
@@ -40,10 +45,9 @@ async function ExecutionViewerWrapper({
 }: {
   executionId: string;
 }) {
- 
   const workflowExecution = await GetWorkflowExecutionWithPhases(executionId);
   if (!workflowExecution) {
-    return <div>Not FOund</div>;
+    return <div>Not Found</div>;
   }
-  return <ExecutionViewer initialData={workflowExecution} />
+  return <ExecutionViewer initialData={workflowExecution} />;
 }
