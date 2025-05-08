@@ -13,25 +13,24 @@ import CreditUsageChart from "../billing/_components/CreditUsageChart";
 import { type Metadata } from "next";
 
 interface HomePageProps {
-  searchParams: {
-    month?: string;
-    year?: string;
-  };
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export default async function HomePage({
-  searchParams,
-}: HomePageProps) {
+export default async function HomePage({ searchParams }: HomePageProps) {
   const currentDate = new Date();
 
-  // Safely parse searchParams with type checking
-  const monthParam = searchParams?.month;
-  const yearParam = searchParams?.year;
+  // Safely parse month and year
+  const monthParam = Array.isArray(searchParams.month)
+    ? searchParams.month[0]
+    : searchParams.month;
+  const yearParam = Array.isArray(searchParams.year)
+    ? searchParams.year[0]
+    : searchParams.year;
 
   const month =
     monthParam && typeof monthParam === "string"
       ? parseInt(monthParam)
-      : currentDate.getMonth();
+      : currentDate.getMonth() + 1; // getMonth is 0-indexed
   const year =
     yearParam && typeof yearParam === "string"
       ? parseInt(yearParam)
