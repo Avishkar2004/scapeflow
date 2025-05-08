@@ -2,11 +2,18 @@ import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Editor from "../../_components/Editor";
 
-interface PageProps {
+// interface PageProps {
+//   params: {
+//     workflowId: string
+//   }
+//   searchParams: { [key: string]: string | string[] | undefined }
+// }
+
+export interface PageProps {
   params: {
-    workflowId: string
-  }
-  searchParams: { [key: string]: string | string[] | undefined }
+    workflowId: string;
+  };
+  searchParams?: Record<string, string | string[] | undefined>;
 }
 
 export default async function Page({ params }: PageProps) {

@@ -10,12 +10,9 @@ import { GetWorflowExecutionStatus } from "@/actions/analytics/GetWorflowExecuti
 import ExecutionStatusChart from "./_components/ExecutionStatusChart";
 import { GetCreditUsageInPeriod } from "@/actions/analytics/getCreditUsageInPeriod";
 import CreditUsageChart from "../billing/_components/CreditUsageChart";
+import { PageProps } from "@/app/workflow/editor/[workflowId]/page";
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined }
-}) {
+export default async function HomePage({ searchParams = {} }: PageProps) {
   const currentDate = new Date();
 
   const month = searchParams?.month
