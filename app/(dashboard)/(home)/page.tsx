@@ -20,18 +20,28 @@ type PageProps = {
   };
 };
 
-export default async function HomePage({ searchParams }: PageProps) {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   const currentDate = new Date();
 
-  const month =
-    searchParams?.month && typeof searchParams.month === "string"
-      ? parseInt(searchParams.month)
-      : currentDate.getMonth() + 1;
+  const monthParam =
+    typeof searchParams?.month === "string"
+      ? searchParams.month
+      : Array.isArray(searchParams?.month)
+      ? searchParams.month[0]
+      : undefined;
+  const yearParam =
+    typeof searchParams?.year === "string"
+      ? searchParams.year
+      : Array.isArray(searchParams?.year)
+      ? searchParams.year[0]
+      : undefined;
 
-  const year =
-    searchParams?.year && typeof searchParams.year === "string"
-      ? parseInt(searchParams.year)
-      : currentDate.getFullYear();
+  const month = monthParam ? parseInt(monthParam) : currentDate.getMonth();
+  const year = yearParam ? parseInt(yearParam) : currentDate.getFullYear();
 
   const period: Period = { month, year };
 
